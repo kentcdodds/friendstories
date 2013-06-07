@@ -1,5 +1,5 @@
 {
-  "name": "application-name",
+  "name": "FriendStories",
   "version": "0.0.1",
   "private": true,
   "scripts": {
@@ -8,6 +8,12 @@
   "dependencies": {
     "express": "3.1.0",
     "jade": "*",
-    "less-middleware": "*"
+    "less-middleware": "*",
+    "mongodb": "*",
+    "mongoose": "*",
+    "angular-bridge": "*",
+    "passport": "*",
+    "winston": "*",
+    "underscore": "_"
   }
 }

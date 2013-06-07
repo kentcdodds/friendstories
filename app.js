@@ -1,13 +1,8 @@
-
-/**
- * Module dependencies.
- */
-
-var express = require('express')
-  , routes = require('./routes')
-  , user = require('./routes/user')
-  , http = require('http')
-  , path = require('path');
+var express = require('express');
+var routes = require('./routes');
+var user = require('./routes/user');
+var http = require('http');
+var path = require('path');
 
 var app = express();
 
@@ -19,7 +14,7 @@ app.configure(function(){
   app.use(express.logger('dev'));
   app.use(express.bodyParser());
   app.use(express.methodOverride());
-  app.use(express.cookieParser('your secret here'));
+  app.use(express.cookieParser('remodel united swine'));
   app.use(express.session());
   app.use(app.router);
   app.use(require('less-middleware')({ src: __dirname + '/public' }));
@@ -32,6 +27,20 @@ app.configure('development', function(){
 
 app.get('/', routes.index);
 app.get('/users', user.list);
+
+mongoose.connect('mongodb://localhost/pizza');
+
+// Mount all the resource on /api prefix
+var angularBridge = new (require('angular-bridge'))(app, {
+  urlPrefix : '/api/'
+});
+
+// With express you can password protect a url prefix :
+app.use('/api', express.basicAuth('admin', 'my_password'));
+
+// Expose the pizzas collection via REST
+angularBridge.addResource('pizzas', db.Pizza);
+
 
 http.createServer(app).listen(app.get('port'), function(){
   console.log("Express server listening on port " + app.get('port'));
