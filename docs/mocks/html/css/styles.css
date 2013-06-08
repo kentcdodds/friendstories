@@ -1,0 +1,35 @@
+#main-content {
+  margin-left: auto;  
+  margin-right: auto;
+  width: 750px;
+}
+
+
+
+#title-container {
+  margin-left: auto;
+  margin-right: auto;
+  width: 500px;
+}
+
+
+
+#action-buttons {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+#new-story-button {
+  float: left;
+}
+
+#view-story-button {
+  float: right;
+}
+
+
+
+#recent-stories-container {
+  margin
+  background-color: gray;
+}
