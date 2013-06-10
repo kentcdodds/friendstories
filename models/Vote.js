@@ -6,7 +6,7 @@ var StoryLine = (function() {
     uriName: 'votes',
     modelName: 'Vote',
     getSchema: function(Schema, options) {
-      var schema = Schema.extend({
+      var schema = options.userContentSchema.extend({
         voteType: {
           type: Boolean
         },

@@ -10,7 +10,6 @@ var db = (function() {
     resources.push(require('../models/StoryLine'));
     resources.push(require('../models/Vote'));
     resources.push(require('../models/Comment'));
-//    resources.push(require('../models/Privilege'));
   };
   
   var addToBridge = function(angularBridge) {
