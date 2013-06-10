@@ -9,11 +9,19 @@
     "express": "3.1.0",
     "jade": "*",
     "less-middleware": "*",
+    
     "mongodb": "*",
     "mongoose": "*",
+    "mongoose-times": "*",
+    "mongoose-schema-extend": "*",
     "angular-bridge": "*",
+    
     "passport": "*",
     "winston": "*",
-    "underscore": "_"
+    "underscore": "*"
+  },
+  "devDependencies": {
+    "chai": "*",
+    "mocha": "*"
   }
 }
