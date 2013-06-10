@@ -1,47 +1,74 @@
 var mongoose = require('mongoose');
-var Schema = mongoose.Schema;
+var logger = require('winston');
 
-var PizzaSchema = new Schema({
-  author : {
-    type : String,
-  },
-  color : {
-    type : String
-  },
-  size : {
-    type : Number
-  },
-  password : {   // You can hide it from read and write ! (cf after)
-    type : String
+var db = (function() {
+  var resources = [];
+  
+  var loadSchemas = function() {
+    resources.push(require('../models/User'));
+    resources.push(require('../models/Story'));
+//    resources.push(require('../models/StoryLine'));
+//    resources.push(require('../models/Vote'));
+//    resources.push(require('../models/StoryState'));
+//    resources.push(require('../models/Comment'));
+//    resources.push(require('../models/Privilege'));
+  };
+  
+  var addToBridge = function(angularBridge) {
+    var Schema = mongoose.Schema;
+    var timestamps = require('mongoose-times');
+    var options = {
+      plugins: {
+        timestamps: timestamps
+      }
+    };
+    var UserContentSchema = require('../models/UserContent').getSchema(mongoose.Schema, options);
+    options.userContentSchema = UserContentSchema;
+    for (var i = 0; i < resources.length; i++) {
+      var resource = resources[i];
+      var schema = resource.getSchema(Schema, options);
+
+      setAngularBridgeMethods(schema);
+      var model = mongoose.model(resource.modelName, schema);
+
+      angularBridge.addResource(resource.name, model);
+    }
+  };
+  
+  var setAngularBridgeMethods = function(schema) {
+    schema.methods.query = function(entities) {
+      logger.info("Queried:");
+      logger.info(entities);
+    };
+
+    schema.methods.get = function(entity) {
+      logger.info("Got:");
+      logger.info(entity);
+    };
+
+    schema.methods.put = function(entity) {
+      logger.info("Put:");
+      logger.info(entity);
+    };
+
+    schema.methods.post = function(entity) {
+      logger.info("Posted:");
+      logger.info(entity);
+    };
+
+    schema.methods.delete = function(entity) {
+      logger.info("Deleted:");
+      logger.info(entity);
+    };
+  };
+  
+  return {
+    setupResources: function(angularBridge) {
+      loadSchemas();
+      addToBridge(angularBridge);
+    }
   }
-});
+})();
 
-// You can optionally add a method to schema.methods that is executed based
-// on the type of HTTP request with the names "query", "get", "put", "post", and "delete"
-// The callback receives the affected entities as it's parameter.
-PizzaSchema.methods.query = function(entities) {
-  console.log("Queried:");
-  console.log(entities);
-};
 
-PizzaSchema.methods.get = function(entity) {
-  console.log("Got:")
-  console.log(entity);
-};
-
-PizzaSchema.methods.put = function(entity) {
-  console.log("Put:")
-  console.log(entity);
-};
-
-PizzaSchema.methods.post = function(entity) {
-  console.log("Posted:")
-  console.log(entity);
-};
-
-PizzaSchema.methods.delete = function(entity) {
-  console.log("Deleted:")
-  console.log(entity);
-};
-
-exports.Pizza = mongoose.model('pizzas', PizzaSchema);
+module.exports = db;
