@@ -6,14 +6,12 @@ var UserContent = (function() {
       var schema = new Schema({
         owners: {
           type: [Schema.Types.ObjectId]
-        },
-        content: {
-          type: String
         }
       });
+      
       schema.plugin(options.plugins.timestamps);
       
-      methods = {
+      var methods = {
         getTotalPoints: function() {
           
         },
@@ -28,8 +26,13 @@ var UserContent = (function() {
         },
         getComments: function() {
           
+        },
+        getOwners: function() {
+          
         }
       };
+
+      schema.method(methods);
       
       return schema;
     }

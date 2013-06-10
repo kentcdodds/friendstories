@@ -49,7 +49,7 @@ mongoose.connect('mongodb://localhost/friend_stories');
 
 // Mount all the resource on /api prefix
 var angularBridge = new (require('angular-bridge'))(app, {
-  urlPrefix : '/api/'
+  urlPrefix : '/api/v1/'
 });
 
 // With express you can password protect a url prefix :

@@ -1,8 +1,13 @@
 var User = (function() {
-  var logger = require('winston');
-
+  var util = require('../common/util');
+  var roles = [
+    'admin',
+    'moderator',
+    'user'
+  ];
+  
   return {
-    name: 'users',
+    uriName: 'users',
     modelName: 'User',
     getSchema: function(Schema, options) {
       var schema = new Schema({
@@ -30,12 +35,8 @@ var User = (function() {
         favoriteStories: {
           type: [Schema.Types.ObjectId]
         },
-        priviledges: {
-          type: [Schema.Types.ObjectId]
-        },
-        dateJoined: {
-          type: Date,
-          default: Date.now
+        role: {
+          type: String
         },
         lastLogin: {
           type: Date,
@@ -43,15 +44,19 @@ var User = (function() {
         }
       });
       
-      schema.methods.getAllContent = function() {
-      
-      };
-
-      schema.methods.getTotalPoints = function() {
-        UserContent = this.getAllContent();
-      };
-
       schema.plugin(options.plugins.timestamps);
+
+      var methods = util.addIsAndSetsToSchema(roles, 'role', schema, this);
+      
+      methods.getTotalPoints = function() {
+        
+      };
+
+      methods.getStories = function() {
+          
+      };
+      
+      schema.method(methods);
       
       return schema;
     }

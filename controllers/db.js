@@ -7,10 +7,9 @@ var db = (function() {
   var loadSchemas = function() {
     resources.push(require('../models/User'));
     resources.push(require('../models/Story'));
-//    resources.push(require('../models/StoryLine'));
-//    resources.push(require('../models/Vote'));
-//    resources.push(require('../models/StoryState'));
-//    resources.push(require('../models/Comment'));
+    resources.push(require('../models/StoryLine'));
+    resources.push(require('../models/Vote'));
+    resources.push(require('../models/Comment'));
 //    resources.push(require('../models/Privilege'));
   };
   
@@ -31,7 +30,7 @@ var db = (function() {
       setAngularBridgeMethods(schema);
       var model = mongoose.model(resource.modelName, schema);
 
-      angularBridge.addResource(resource.name, model);
+      angularBridge.addResource(resource.uriName, model);
     }
   };
   
