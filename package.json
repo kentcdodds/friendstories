@@ -15,6 +15,7 @@
     "mongoose-times": "*",
     "mongoose-schema-extend": "*",
     "angular-bridge": "*",
+    "supergoose": "*",
     
     "passport": "*",
     "winston": "*",
