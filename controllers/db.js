@@ -13,23 +13,21 @@ var db = (function() {
   };
   
   var addToBridge = function(angularBridge) {
-    var Schema = mongoose.Schema;
     var timestamps = require('mongoose-times');
     var options = {
       plugins: {
         timestamps: timestamps
-      }
+      },
+      mongoose: mongoose
     };
-    var UserContentSchema = require('../models/UserContent').getSchema(mongoose.Schema, options);
+    var UserContentSchema = require('../models/UserContent').setupSchema(options);
     options.userContentSchema = UserContentSchema;
     for (var i = 0; i < resources.length; i++) {
       var resource = resources[i];
-      var schema = resource.getSchema(Schema, options);
+      resource.setupResource(options);
 
-      setAngularBridgeMethods(schema);
-      var model = mongoose.model(resource.modelName, schema);
-
-      angularBridge.addResource(resource.uriName, model);
+      setAngularBridgeMethods(resource.schema);
+      angularBridge.addResource(resource.uriName, resource.model);
     }
   };
   
@@ -64,6 +62,13 @@ var db = (function() {
     setupResources: function(angularBridge) {
       loadSchemas();
       addToBridge(angularBridge);
+    },
+    getObjectsFromId: function(resourceName, id) {
+      if (!_.isArray(id)) {
+        id = [id];
+      }
+      var resource = resources[_.indexOf(resources, resourceName)];
+      resource.getSchema()
     }
   }
 })();

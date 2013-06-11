@@ -1,40 +1,24 @@
-var extend = require('mongoose-schema-extend');
-var util = require('../common/util');
-
 var StoryLine = (function() {
+  var extend = require('mongoose-schema-extend');
+  var util = require('../common/util');
+  
+  var getSchema = function(options) {
+    var schema = options.userContentSchema.extend({
+    });
 
-  var lineTypes = [
-    'normal',
-    'starter'
-  ];
+    var methods = {};
+    schema.method(methods);
+    
+    return schema;
+  };
   
   return {
     uriName: 'storylines',
-    modelName: 'StoryLine',
-    getSchema: function(Schema, options) {
-      var schema = options.userContentSchema.extend({
-        content: {
-          type: String
-        },
-        lineType: {
-          type: String
-        },
-        stories: {
-          type: [Schema.Types.ObjectId] 
-        }
-      });
-
-      var methods = util.addIsAndSetsToSchema(lineTypes, 'lineType', schema, this);
-      
-      methods.getStories = function() {
-        //TODO: Get all stories from story ids array.
-      };
-
-      schema.method(methods);
-
-      return schema;
+    setupResource: function(options) {
+      this.schema = getSchema(options);
+      this.model = options.mongoose.model('StoryLine', this.schema);
     }
-  }
+  };
 })();
 
 module.exports = StoryLine;
