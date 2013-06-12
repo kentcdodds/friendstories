@@ -1,6 +1,5 @@
 var StoryLine = (function() {
   var extend = require('mongoose-schema-extend');
-  var util = require('../common/util');
   
   var getSchema = function(options) {
     var schema = options.userContentSchema.extend({
