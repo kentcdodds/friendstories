@@ -16,6 +16,7 @@ var StoryLine = (function() {
     setupResource: function(options) {
       this.schema = getSchema(options);
       this.model = options.mongoose.model('Comment', this.schema);
+      return this;
     }
   };
 })();

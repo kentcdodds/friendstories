@@ -1,6 +1,26 @@
 
 var UserContent = (function() {
   var Schema = require('mongoose').Schema;
+  var types = {
+    Comment: {
+      votePoints: {
+        up: 2,
+        down: 1
+      }
+    },
+    Story: {
+      votePoints: {
+        up: 15,
+        down: 5
+      }
+    },
+    StoryLine: {
+      votePoints: {
+        up: 2,
+        down: 1
+      }
+    }
+  };
   
   var getSchema = function(options) {
     var schema = new Schema({
@@ -39,7 +59,8 @@ var UserContent = (function() {
     setupSchema: function(options) {
       this.schema = getSchema(options);
       return this.schema;
-    }
+    },
+    types: types
   }
 })();
 

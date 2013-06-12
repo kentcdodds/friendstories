@@ -2,32 +2,37 @@ var mongoose = require('mongoose');
 var logger = require('winston');
 
 var db = (function() {
-  var resources = [];
+  
+  var retObject;
   
   var loadSchemas = function() {
+    var resources = [];
     resources.push(require('../models/User'));
     resources.push(require('../models/Story'));
     resources.push(require('../models/StoryLine'));
     resources.push(require('../models/Vote'));
     resources.push(require('../models/Comment'));
+    return resources;
   };
   
   var addToBridge = function(angularBridge) {
-    var timestamps = require('mongoose-times');
     var options = {
       plugins: {
-        timestamps: timestamps
+        timestamps: require('mongoose-times')
       },
       mongoose: mongoose
     };
     var UserContentSchema = require('../models/UserContent').setupSchema(options);
     options.userContentSchema = UserContentSchema;
-    for (var i = 0; i < resources.length; i++) {
-      var resource = resources[i];
+    for (var i = 0; i < retObject.resources.length; i++) {
+      var resource = retObject.resources[i];
       resource.setupResource(options);
 
       setAngularBridgeMethods(resource.schema);
-      angularBridge.addResource(resource.uriName, resource.model);
+      
+      if (angularBridge) {
+        angularBridge.addResource(resource.uriName, resource.model);
+      }
     }
   };
   
@@ -58,19 +63,31 @@ var db = (function() {
     };
   };
   
-  return {
+  retObject = {
     setupResources: function(angularBridge) {
-      loadSchemas();
+      this.resources = loadSchemas();
       addToBridge(angularBridge);
     },
-    getObjectsFromId: function(resourceName, id) {
-      if (!_.isArray(id)) {
-        id = [id];
+    getObjectsFromIds: function(resourceName, ids, callback) {
+      if (!_.isArray(ids)) {
+        ids = [ids];
       }
-      var resource = resources[_.indexOf(resources, resourceName)];
-      resource.getSchema()
+      var resource = this.resources[_.indexOf(this.resources, resourceName)];
+      return resource.model.find({
+        '_id': {
+          $in: ids
+        }
+      }, function(err, docs) {
+        if (err) {
+          callback(err, null);
+        } else {
+          callback(null, docs);
+        }
+      });
     }
-  }
+  };
+  
+  return retObject;
 })();
 
 

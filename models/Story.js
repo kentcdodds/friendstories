@@ -16,13 +16,17 @@ var Story = (function() {
         type: String,
         enum: visibilities
       },
-      views: [Schema.Types.ObjectId],
-      storyLines: [Schema.Types.ObjectId]
+      viewers: [Schema.Types.ObjectId],
+      storyLines: [Schema.Types.ObjectId],
+      annonymousViewCount: {
+        type: Number,
+        default: 0
+      }
     });
 
     var methods = util.addIsAndSetsToSchema(visibilities, 'visibility', schema, this);
-    methods.getLines = function() {
-      //TODO: Search for all StoryLines with this story's id.
+    methods.getLines = function(callback) {
+      db.getObjectsFromIds('StoryLine', this.storyLines, callback);
     };
 
     schema.method(methods);
@@ -34,7 +38,9 @@ var Story = (function() {
     setupResource: function(options) {
       this.schema = getSchema(options);
       this.model = options.mongoose.model('Story', this.schema);
-    }
+      return this;
+    },
+    visibilities: visibilities
   };
 })();
 

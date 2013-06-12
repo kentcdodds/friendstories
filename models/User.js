@@ -62,6 +62,7 @@ var User = (function() {
     setupResource: function(options) {
       this.schema = getSchema(options);
       this.model = options.mongoose.model('User', this.schema);
+      return this;
     }
   }
 })();
