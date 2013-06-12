@@ -68,6 +68,9 @@ var db = (function() {
       this.resources = loadSchemas();
       addToBridge(angularBridge);
     },
+    connectMongoose: function() {
+      mongoose.connect('mongodb://localhost/friend_stories');
+    },
     getObjectsFromIds: function(resourceName, ids, callback) {
       if (!_.isArray(ids)) {
         ids = [ids];

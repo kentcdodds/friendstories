@@ -5,7 +5,6 @@ var routes = require('./routes');
 var user = require('./routes/user');
 var http = require('http');
 var path = require('path');
-var mongoose = require('mongoose');
 var db = require('./controllers/db');
 var logger = require('winston');
 
@@ -45,7 +44,7 @@ app.configure('development', function(){
 app.get('/', routes.index);
 app.get('/users', user.list);
 
-mongoose.connect('mongodb://localhost/friend_stories');
+db.connectMongoose();
 
 // Mount all the resource on /api prefix
 var angularBridge = new (require('angular-bridge'))(app, {
