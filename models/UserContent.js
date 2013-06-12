@@ -19,6 +19,12 @@ var UserContent = (function() {
         up: 2,
         down: 1
       }
+    },
+    FlagReports: {
+      votePoints: {
+        up: 0,
+        down: 0
+      }
     }
   };
   
@@ -27,7 +33,8 @@ var UserContent = (function() {
       content: String,
       owners: [Schema.Types.ObjectId],
       comments: [Schema.Types.ObjectId],
-      votes: [Schema.Types.ObjectId]
+      votes: [Schema.Types.ObjectId],
+      flagReports: [Schema.Types.ObjectId]
     });
 
     schema.plugin(options.plugins.timestamps);

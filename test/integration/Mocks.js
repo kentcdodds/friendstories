@@ -8,28 +8,22 @@ var Mocks = (function() {
   var StoryLineResource = require('../../models/StoryLine');
   var VoteResource = require('../../models/Vote');
   var CommentResource = require('../../models/Comment');
+  var FlagReportResource = require('../../models/FlagReport');
   
   var User = UserResource.model;
   var Story = StoryResource.model;
   var StoryLine = StoryLineResource.model;
   var Vote = VoteResource.model;
   var Comment = CommentResource.model;
+  var FlagReport = FlagReportResource.model;
   
   var i = 0;
   var j = 0;
 
-  var getRandomNumber = function(bottom, top) {
-    if (arguments.length < 2) {
-      top = bottom;
-      bottom = 0;
-    }
-    return Math.floor(Math.random() * top) + bottom;
-  };
-  
   var randomString = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis vulputate urna eget cursus volutpat. Maecenas egestas purus sed arcu venenatis pretium. Ut rhoncus nulla vitae felis pellentesque ornare. Donec vel diam nisi. Cras eu enim leo. Etiam et enim lorem. Fusce rhoncus neque arcu, non euismod neque lobortis eget. Praesent placerat mi nec vulputate adipiscing. Nulla facilisi. Mauris dignissim fringilla ligula eget rutrum. Suspendisse ac tortor eu enim euismod auctor. Morbi pretium erat est, vel ornare massa eleifend sed. Curabitur eu dignissim orci, in posuere sapien. Donec ligula risus, tempus in sem ut, porta faucibus massa. "
   randomString += randomString + randomString + randomString;
   var getRandomString = function(length) {
-    var start = getRandomNumber(0, randomString.length - length);
+    var start = _.random(0, randomString.length - length);
     var shortRandomString = randomString.substring(start, start + length);
     return shortRandomString;
   };
@@ -40,8 +34,17 @@ var Mocks = (function() {
     }
   }
   
-  var getRandomItem = function(arry) {
-    return arry[getRandomNumber(arry.length)];
+  var getRandomItem = function(arry, exclusions) {
+    exclusions = exclusions || [];
+    if (!_.isArray(exclusions)) {
+      exclusions = [exclusions];
+    }
+    var item = arry[_.random(arry.length - 1)];
+    if (_.indexOf(exclusions, item) === -1) {
+      return item;
+    } else if (arry.length > exclusions.length) {
+      return getRandomItem(arry, exclusions);
+    }
   };
   
   var getVotes = function(options) {
@@ -49,7 +52,7 @@ var Mocks = (function() {
     var votes = [];
     var max = options.max || 4;
     var min = options.min || 0;
-    for (var voteI = 0; voteI < getRandomNumber(min, max) && availableObjects.Votes.length > 0; voteI++) {
+    for (var voteI = 0; voteI < _.random(min, max) && availableObjects.Votes.length > 0; voteI++) {
       var vote = availableObjects.Votes.pop();
       vote.setPointsFor(options.type);
       votes.push(vote._id);
@@ -57,16 +60,6 @@ var Mocks = (function() {
     return votes;
   };
   
-  var getComments = function(options) {
-    options = options || {};
-    var comments = [];
-    var max = options.max || 4;
-    var min = options.min || 0;
-    for (var commentI = 0; commentI < getRandomNumber(min, max) && availableObjects.Comments.length > 0; commentI++) {
-      comments.push(availableObjects.Comments.pop()._id);
-    }
-  };
-
   var modelMocks = {};
   var availableObjects = {};
 
@@ -125,7 +118,7 @@ var Mocks = (function() {
 
   // --------------------- Setup Votes ------------------------- //
   modelMocks.Votes = [];
-  for (i = 0; i < 500; i++) {
+  for (i = 0; i < 700; i++) {
     modelMocks.Votes.push(new Vote({
       voteType: (Math.random() > 0.5)
     }));
@@ -140,10 +133,9 @@ var Mocks = (function() {
   for (i = 0; i < 10; i++) {
     var visibility = getRandomItem(StoryResource.visibilities);
     var owner0 = getRandomItem(modelMocks.Users);
-    var owner1 = getRandomItem(modelMocks.Users);
+    var owner1 = getRandomItem(modelMocks.Users, [owner0]);
     if (owner0 === owner1) {
-      var ownerIndex = _.indexOf(modelMocks.Users, owner0);
-      owner1 = modelMocks.Users[ownerIndex + (ownerIndex === 0 ? 1 : -1)];
+      throw new Error("This shouldn't happen!");
     }
     var owners = [owner0._id, owner1._id];
     var viewers = [owner0._id, owner1._id];
@@ -156,10 +148,10 @@ var Mocks = (function() {
       owners: owners,
       viewers: viewers,
       storyLines: [],
-      content: getRandomString(getRandomNumber(7, 15)),
+      content: getRandomString(_.random(7, 15)),
       votes: getVotes({type: 'Story'}),
       comments: [],
-      annonymousViewCount: getRandomNumber(500)
+      annonymousViewCount: _.random(500)
     }));
   }
 
@@ -170,7 +162,7 @@ var Mocks = (function() {
   modelMocks.Comments = [];
   for (i = 0; i < 225; i++) {
     modelMocks.Comments.push(new Comment({
-      content: getRandomString(getRandomNumber(5, 30)),
+      content: getRandomString(_.random(5, 30)),
       owners: [getRandomItem(modelMocks.Users)._id],
       votes: getVotes({type: 'Comment'})
     }));
@@ -183,14 +175,11 @@ var Mocks = (function() {
   modelMocks.StoryLines = [];
   for(i = 0; i < modelMocks.Stories.length; i++) {
     var story = modelMocks.Stories[i];
-    for (j = 0; j < getRandomNumber(10, 25); j++) {
-      var randomNumberOfCharacters = getRandomNumber(40, 80);
-      var randomStoryLine = getRandomString(randomNumberOfCharacters);
+    for (j = 0; j < _.random(10, 25); j++) {
       var storyLine = new StoryLine({
-        content: randomStoryLine,
+        content: getRandomString(_.random(40, 80)),
         owners: [story.owners[j % 2]],
         votes: getVotes({type: 'StoryLine'}),
-        comments: getComments()
       });
       story.storyLines.push(storyLine);
       modelMocks.StoryLines.push(storyLine);
@@ -198,32 +187,53 @@ var Mocks = (function() {
   }
   
   // --------------------- Relate objects ------------------------- //
+  //Flag random UserContents
+  modelMocks.FlagReports = [];
+  var flagRandomUserContents = function(arry) {
+    for (i = 0; i < arry.length; i++) {
+      if (Math.random() < .15) {
+        var item = arry[i];
+        var flagReport = new FlagReport({
+          flagType: getRandomItem(FlagReportResource.flagTypes),
+          content: getRandomString(_.random(15, 25)),
+          owners: getRandomItem(_.difference(modelMocks.Users, item.owners)),
+          votes: getVotes({type: 'FlagReports'})
+        });
+        modelMocks.FlagReports.push(flagReport);
+        item.flagReports = item.flagReports || [];
+        item.flagReports.push(flagReport);
+      }
+    }
+  };
 
-  var relateObjects = function(arry, max, itemArry, propertyName) {
+  flagRandomUserContents(modelMocks.Comments);
+  flagRandomUserContents(modelMocks.Stories);
+  flagRandomUserContents(modelMocks.StoryLines);
+
+  var relateObjects = function(arry, min, max, itemArry, propertyName) {
     for (i = 0; i < arry.length; i++) {
       var items = [];
-      for (j = 0; j < getRandomNumber(max); j++) {
+      for (j = 0; j < _.random(min, max); j++) {
         items.push(getRandomItem(itemArry)._id);
       }
       arry[i][propertyName] = _.uniq(items);
     } 
   };
   
-  relateObjects(modelMocks.Users, 20, modelMocks.Stories, 'favoriteStories');
-  relateObjects(modelMocks.Comments, 5, modelMocks.Comments, 'comments');
-  relateObjects(modelMocks.Stories, 7, modelMocks.Comments, 'comments');
-  relateObjects(modelMocks.StoryLines, 3, modelMocks.Comments, 'comments');
+  relateObjects(modelMocks.Users, 5, 20, modelMocks.Stories, 'favoriteStories');
+  relateObjects(modelMocks.Comments, -3, 5, modelMocks.Comments, 'comments');
+  relateObjects(modelMocks.Stories,4 , 7, modelMocks.Comments, 'comments');
+  relateObjects(modelMocks.StoryLines, -2, 3, modelMocks.Comments, 'comments');
+  relateObjects(modelMocks.FlagReports, -2, 3, modelMocks.Comments, 'comments');
   
   
-  console.log(JSON.stringify(modelMocks, null, 2));
+//  console.log(JSON.stringify(modelMocks, null, 2));
 //  console.log(JSON.stringify(modelMocks.Comment, null, 2));
 //  console.log(JSON.stringify(modelMocks.Stories, null, 2));
 //  console.log(JSON.stringify(modelMocks.StoryLines, null, 2));
 //  console.log(JSON.stringify(modelMocks.Users, null, 2));
 //  console.log(JSON.stringify(modelMocks.Votes, null, 2));
-//  console.log(availableObjects.Comments.length);
-//  console.log(availableObjects.Votes.length);
-
+//  console.log(JSON.stringify(modelMocks.FlagReports, null, 2));
 
   return {
     models: modelMocks
