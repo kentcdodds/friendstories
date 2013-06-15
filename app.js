@@ -18,11 +18,13 @@ app.configure(function() {
     require('./config.local').setupEnvironmentVariables();
   }
   
+  var homeDir = process.env.OPENSHIFT_REPO_DIR;
+
   app.set('port', process.env.OPENSHIFT_NODEJS_PORT);
-  app.set('views', __dirname + '/views');
+  app.set('views', homeDir + '/views');
   app.set('view engine', 'jade');
   
-  app.use(express.favicon(__dirname + '/public/img/favicon.ico'));
+  app.use(express.favicon(homeDir + '/public/img/favicon.ico'));
   
   app.use(express.logger('dev'));
   app.use(express.bodyParser());
@@ -31,9 +33,9 @@ app.configure(function() {
   app.use(express.session({secret: 'yahoo quest waste', cookie: {maxAge: oneWeek * 3}}));
   
   app.use(app.router);
-  app.use(require('less-middleware')({ src: __dirname + '/public' }));
+  app.use(require('less-middleware')({ src: homeDir + '/public' }));
   
-  app.use(express.static(path.join(__dirname, 'public')));
+  app.use(express.static(path.join(homeDir, 'public')));
 });
 
 app.configure('development', function(){
@@ -59,7 +61,6 @@ db.connectMongoose();
 var angularBridge = new (require('angular-bridge'))(app, {
   urlPrefix : '/api/v1/'
 });
-console.log('Here 8');
 
 // With express you can password protect a url prefix :
 //app.use('/api', express.basicAuth('admin', 'my_password'));
