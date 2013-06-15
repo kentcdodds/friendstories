@@ -3,7 +3,6 @@
 var express = require('express');
 var routes = require('./routes');
 var user = require('./routes/user');
-var http = require('http');
 var path = require('path');
 var db = require('./controllers/db');
 var logger = require('winston');
@@ -57,13 +56,10 @@ console.log('Here 8');
 
 db.setupResources(angularBridge);
 
-console.log('here before creating server');
-var server = http.createServer(app);
-console.log('here after creating server, before getting the port');
 var port = app.get('port');
 console.log('The port is: ' + port);
 
 console.log('beginning to listen on the port');
-server.listen(port, function() {
+app.listen(port, function() {
   logger.info("Express server listening on port " + app.get('port'));
 });
