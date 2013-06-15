@@ -8,6 +8,7 @@ var path = require('path');
 var db = require('./controllers/db');
 var logger = require('winston');
 
+console.log('This is a debugger line... I am starting up the app!');
 
 var app = express();
 
