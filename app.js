@@ -18,7 +18,7 @@ app.configure(function() {
     logger.info('on local host, setting up environement variables from config.local');
     require('./config.local').setupEnvironmentVariables();
   } else {
-    process.env.PORT = 8080;
+    process.env.PORT = 80;
   }
   
   app.set('port', process.env.PORT || 3000);
