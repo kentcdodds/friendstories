@@ -43,6 +43,16 @@ app.configure('development', function(){
 app.get('/', routes.index);
 app.get('/users', user.list);
 
+app.use('/protected', express.basicAuth('admin', '3quietKittens!'));
+app.get('/protected/:operation', function(req, res) {
+  var operation = req.params.operation;
+  var opFunction = require('./common/ResetDatabase')[operation];
+  if (opFunction) {
+    opFunction();
+  }
+  res.send('Operation started!');
+});
+
 db.connectMongoose();
 
 // Mount all the resource on /api prefix

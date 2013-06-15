@@ -8,7 +8,8 @@ var ResetDatabase = (function() {
   var i = 0;
   db.connectMongoose();
   console.log('Connected...');
-  if (dropCollections) {
+  
+  var deleteDatabase = function() {
     db.setupResources();
     console.log('Dropping Collections');
     for (i = 0; i < db.resources.length; i++) {
@@ -24,7 +25,9 @@ var ResetDatabase = (function() {
       }
       mongoose.connection.collections[resource.uriName].drop(callback);
     }
-  } else {
+  };
+  
+  var loadDatabase = function() {
     console.log('Loading mocks...');
     var models = require('../test/integration/Mocks').models;
     var keys = _.keys(models);
@@ -40,8 +43,16 @@ var ResetDatabase = (function() {
       }
     }
     console.log('Mocks saved!');
+  };
+  
+  if (dropCollections) {
+    deleteDatabase();
+  } else {
+    loadDatabase();
   }
   return {
+    deleteDatabase: deleteDatabase,
+    loadDatabase: loadDatabase
   }
 })();
 
