@@ -70,7 +70,7 @@ var db = (function() {
       addToBridge(angularBridge);
     },
     connectMongoose: function() {
-      mongoose.connect('mongodb://localhost/friend_stories');
+      mongoose.connect(process.env.OPENSHIFT_MONGODB_DB_URL);
     },
     getObjectsFromIds: function(resourceName, ids, callback) {
       if (!_.isArray(ids)) {
