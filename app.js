@@ -17,9 +17,11 @@ app.configure(function() {
   if (onLocalHost) {
     logger.info('on local host, setting up environement variables from config.local');
     require('./config.local').setupEnvironmentVariables();
+  } else {
+    process.env.PORT = 8080;
   }
   
-  app.set('port', process.env.OPENSHIFT_INTERNAL_PORT || process.env.PORT || 3000);
+  app.set('port', process.env.PORT || 3000);
   app.set('views', __dirname + '/views');
   app.set('view engine', 'jade');
   
