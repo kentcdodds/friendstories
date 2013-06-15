@@ -12,7 +12,7 @@ var logger = require('winston');
 var app = express();
 
 app.configure(function() {
-  var onLocalHost = !process.env.ENVIRONMENT;
+  var onLocalHost = !process.env.OPENSHIFT_APP_DNS;
   var oneWeek = 604800000;
   if (onLocalHost) {
     logger.info('on local host, setting up environement variables from config.local');
