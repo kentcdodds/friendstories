@@ -69,9 +69,11 @@ var angularBridge = new (require('angular-bridge'))(app, {
 db.setupResources(angularBridge);
 
 var port = app.get('port');
+var ipAddress = process.env.OPENSHIFT_NODEJS_IP;
 console.log('The port is: ' + port);
+console.log('The ip address is: ' + ipAddress);
 
 console.log('beginning to listen on the port');
-app.listen(port, function() {
-  logger.info("Express server listening on port " + app.get('port'));
+app.listen(port, ipAddress, function() {
+  logger.info(Date(Date.now()) + ': Node server started on ' + ipAddress + ':' + port);
 });
