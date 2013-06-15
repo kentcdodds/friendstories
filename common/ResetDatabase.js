@@ -6,11 +6,8 @@ var ResetDatabase = (function() {
   
   var db = require('../controllers/db');
   var i = 0;
-  db.connectMongoose();
-  console.log('Connected...');
   
   var deleteDatabase = function() {
-    db.setupResources();
     console.log('Dropping Collections');
     for (i = 0; i < db.resources.length; i++) {
       var resource = db.resources[i];

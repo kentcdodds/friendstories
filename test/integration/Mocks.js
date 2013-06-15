@@ -1,7 +1,9 @@
 var Mocks = (function() {
   var db = require('../../controllers/db');
   var _ = require('underscore');
-  db.setupResources();
+  if (!db.resources) {
+    db.setupResources();
+  }
   
   var UserResource = require('../../models/User');
   var StoryResource = require('../../models/Story');
