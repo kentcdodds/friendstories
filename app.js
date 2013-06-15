@@ -19,12 +19,13 @@ app.configure(function() {
   }
   
   var homeDir = process.env.OPENSHIFT_REPO_DIR;
+  console.log('homeDir is ' + homeDir);
 
   app.set('port', process.env.OPENSHIFT_NODEJS_PORT);
-  app.set('views', homeDir + '/views');
+  app.set('views', homeDir + 'views');
   app.set('view engine', 'jade');
   
-  app.use(express.favicon(homeDir + '/public/img/favicon.ico'));
+  app.use(express.favicon(homeDir + 'public/img/favicon.ico'));
   
   app.use(express.logger('dev'));
   app.use(express.bodyParser());
@@ -33,7 +34,7 @@ app.configure(function() {
   app.use(express.session({secret: 'yahoo quest waste', cookie: {maxAge: oneWeek * 3}}));
   
   app.use(app.router);
-  app.use(require('less-middleware')({ src: homeDir + '/public' }));
+  app.use(require('less-middleware')({ src: homeDir + 'public' }));
   
   app.use(express.static(path.join(homeDir, 'public')));
 });
