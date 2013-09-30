@@ -32,7 +32,7 @@ var UserContent = (function() {
     var schema = new Schema({
       content: String,
       owners: [Schema.Types.ObjectId],
-      comments: [Schema.Types.ObjectId],
+      comments: [options.schemas.Comment],
       votes: [Schema.Types.ObjectId],
       flagReports: [Schema.Types.ObjectId]
     });

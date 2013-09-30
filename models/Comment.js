@@ -1,8 +1,12 @@
-var StoryLine = (function() {
+var CommentSchema = (function() {
   var extend = require('mongoose-schema-extend');
   
   var getSchema = function(options) {
-    var schema = options.userContentSchema.extend({
+    var schema = new Schema({
+      comment: String,
+      owners: [Schema.Types.ObjectId],
+      votes: [options.schemas.Vote],
+      flagReports: [options.schemas.flagReport]
     });
 
     var methods = {};
@@ -21,4 +25,4 @@ var StoryLine = (function() {
   };
 })();
 
-module.exports = StoryLine;
+module.exports = CommentSchema;

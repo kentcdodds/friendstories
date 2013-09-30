@@ -11,12 +11,11 @@ var db = (function() {
     resources.push(require('../models/Story'));
     resources.push(require('../models/StoryLine'));
     resources.push(require('../models/Vote'));
-    resources.push(require('../models/Comment'));
     resources.push(require('../models/FlagReport'));
     return resources;
   };
-  
-  var addToBridge = function(angularBridge) {
+
+  var getOptions = function() {
     var options = {
       plugins: {
         timestamps: require('mongoose-times')
@@ -25,6 +24,11 @@ var db = (function() {
     };
     var UserContentSchema = require('../models/UserContent').setupSchema(options);
     options.userContentSchema = UserContentSchema;
+    var CommentSchema = require('../models/Comment').schema;
+  };
+  
+  var addToBridge = function(angularBridge) {
+    var options = getOptions();
     for (var i = 0; i < retObject.resources.length; i++) {
       var resource = retObject.resources[i];
       resource.setupResource(options);

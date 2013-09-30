@@ -19,7 +19,6 @@ app.configure(function() {
   }
   
   var homeDir = process.env.OPENSHIFT_REPO_DIR;
-  console.log('homeDir is ' + homeDir);
 
   app.set('port', process.env.OPENSHIFT_NODEJS_PORT);
   app.set('views', homeDir + 'views');
@@ -64,16 +63,18 @@ var angularBridge = new (require('angular-bridge'))(app, {
 });
 
 // With express you can password protect a url prefix :
-//app.use('/api', express.basicAuth('admin', 'my_password'));
+logger.info('setting up basicAuth');
+app.use('/api/v1/:resource', express.basicAuth(function(user, pass, callback) {
+  logger.info('Username: ' + user);
+  logger.info('Password: ' + pass);
+  callback(null, user);
+}));
 
 db.setupResources(angularBridge);
 
 var port = app.get('port');
 var ipAddress = process.env.OPENSHIFT_NODEJS_IP;
-console.log('The port is: ' + port);
-console.log('The ip address is: ' + ipAddress);
 
-console.log('beginning to listen on the port');
 app.listen(port, ipAddress, function() {
   logger.info(Date(Date.now()) + ': Node server started on ' + ipAddress + ':' + port);
 });
